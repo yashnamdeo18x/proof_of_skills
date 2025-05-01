@@ -42,6 +42,19 @@ INSTALLED_APPS = [
     'home',
 ]
 
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GITHUB_KEY = 'Ov23lirnORP8LDGnuOz5'
+SOCIAL_AUTH_GITHUB_SECRET = '252de3dad6858dc038bd50a0c9baf33c190d2b22'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,8 +90,12 @@ WSGI_APPLICATION = 'proof_of_skills.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'proof_of_skill_db',
+        'USER': 'root',
+        'PASSWORD': '@Yash514',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 

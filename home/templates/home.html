@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Repositories</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .repo-card {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 5px solid #007bff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome, {{ user.username }} 👋</h1>
+    <h3>Your GitHub Repositories:</h3>
+
+    {% for repo in repos %}
+    <div class="repo-card">
+        <h3>{{ repo.name }}</h3>
+        <p><strong>Created on:</strong> {{ repo.created|date:"Y-m-d" }}</p>
+    
+        <p><strong>Languages Used:</strong></p>
+        <ul>
+            {% for lang, percent in repo.languages.items %}
+            <li>{{ lang }} – {{ percent }} </li>
+            {% endfor %}
+        </ul>
+    
+        <p><strong>Project Files:</strong></p>
+        <ul>
+            {% for file in repo.files %}
+            <li>{{ file }}</li>
+            {% endfor %}
+        </ul>
+    
+        <form method="POST" action="/verify-repo/">
+            {% csrf_token %}
+            <input type="hidden" name="repo_name" value="{{ repo.name }}">
+            <button class="btn">🛡️ Verify</button>
+        </form>
+    </div>
+    {% empty %}
+    <p>No repositories found.</p>
+    {% endfor %}
+    <p><a href="{% url 'logout' %}">Logout</a></p>
+</body>
+</html>
+
+
