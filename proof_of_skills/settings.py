@@ -51,9 +51,9 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_GITHUB_KEY = 'Ov23lirnORP8LDGnuOz5'
 SOCIAL_AUTH_GITHUB_SECRET = '252de3dad6858dc038bd50a0c9baf33c190d2b22'
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/login/github/'
+LOGIN_REDIRECT_URL = '/api/repos/'
+LOGOUT_REDIRECT_URL = '/landing/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

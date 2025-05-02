@@ -20,6 +20,6 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
-    path('', include('social_django.urls', namespace='social')),
+    path('auth/', include('social_django.urls', namespace='social')),
     path('accounts/', include('django.contrib.auth.urls')),  # ✅ This line is the fix!
 ]

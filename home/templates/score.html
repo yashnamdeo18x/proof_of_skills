@@ -1,0 +1,17 @@
+<h1>🔍 Verification Result for "{{ repo }}"</h1>
+
+<p><strong>Skill Score:</strong> {{ score }}%</p>
+<p><strong>Verdict:</strong> {{ verdict }}</p>
+
+{% if show_mint %}
+    <form action="/mint-nft/" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="repo_name" value="{{ repo }}">
+        <input type="hidden" name="score" value="{{ score }}">
+        <button type="submit">🪙 Mint NFT</button>
+    </form>
+{% else %}
+    <p style="color: red;">❌ Not eligible to mint — originality score too low.</p>
+{% endif %}
+
+<a href="/dashboard/">← Back to Dashboard</a>
