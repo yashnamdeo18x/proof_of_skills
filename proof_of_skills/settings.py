@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'home',
 ]
 
-
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
     'django.contrib.auth.backends.ModelBackend',
@@ -63,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = 'proof_of_skills.urls'
@@ -94,6 +94,17 @@ DATABASES = {
         'NAME': 'proof_of_skill_db',
         'USER': 'root',
         'PASSWORD': '@Yash514',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+#change by Arpit sharma
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'proof_of_skill_db',
+        'USER': 'root',
+        'PASSWORD': 'Arpit2007@',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -140,3 +151,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
