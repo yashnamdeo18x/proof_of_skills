@@ -100,39 +100,51 @@ def verify_repo(request):
         email = request.user.email
 
         try:
-            # GitHub token from social auth
+            # GitHub token
             social = UserSocialAuth.objects.get(user=request.user, provider='github')
             token = social.extra_data['access_token']
             headers = {'Authorization': f'token {token}'}
 
-            # Base API URLs
             owner = username
             base_url = f"https://api.github.com/repos/{owner}/{repo_name}"
 
-            # Get main repo info
+            # === REPO INFO ===
             repo_res = requests.get(base_url, headers=headers)
-            repo_data = repo_res.json()
+            try:
+                repo_data = repo_res.json()
+                # Catch GitHub error like {"message": "Not Found"}
+                if not isinstance(repo_data, dict) or 'created_at' not in repo_data:
+                    return render(request, 'error.html', {'message': 'Repository not found or inaccessible.'})
+            except Exception:
+                return render(request, 'error.html', {'message': 'Failed to fetch repository information.'})
 
-            # Get commits
+            # === COMMITS ===
             commits_res = requests.get(f"{base_url}/commits", headers=headers)
-            commits_data = commits_res.json()
+            try:
+                commits_data = commits_res.json()
+                commits = commits_data[:100] if isinstance(commits_data, list) else []
+            except Exception:
+                commits = []
 
-            if isinstance(commits_data, list):
-                commits = commits_data[:100]  # ✅ safe slice
-            else:
-                commits = []  # fallback if error
-
-            # Get contributors
+            # === CONTRIBUTORS ===
             contributors_res = requests.get(f"{base_url}/contributors", headers=headers)
-            contributors_data = contributors_res.json()
-            contributors = contributors_data if isinstance(contributors_data, list) else []
+            try:
+                contributors_data = contributors_res.json()
+                contributors = contributors_data if isinstance(contributors_data, list) else []
+            except Exception:
+                contributors = []
 
-            # Get file contents
+            # === FILES ===
             files_res = requests.get(f"{base_url}/contents", headers=headers)
-            files = files_res.json()
+            try:
+                files_data = files_res.json()
+                files = files_data if isinstance(files_data, list) else []
+            except Exception:
+                files = []
+
             file_count = len(files)
 
-            # Combine everything
+            # === PREPARE DATA FOR SCORING ===
             github_data = {
                 "repo": repo_data,
                 "commits": commits,
@@ -141,7 +153,6 @@ def verify_repo(request):
                 "file_count": file_count
             }
 
-            # Prepare input & calculate score
             score_input = get_score_input(github_data, username, email)
             result = calculate_repo_score(score_input)
 
@@ -153,6 +164,7 @@ def verify_repo(request):
             })
 
         except Exception as e:
+            print("🔴 Verification Error:", str(e))  # Optional debug log
             return render(request, 'error.html', {'message': str(e)})
 
     return redirect('home')

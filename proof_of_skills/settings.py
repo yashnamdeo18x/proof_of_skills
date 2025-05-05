@@ -98,17 +98,7 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-#change by Arpit sharma
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'proof_of_skill_db',
-        'USER': 'root',
-        'PASSWORD': 'Arpit2007@',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
+
 
 
 # Password validation
