@@ -5,72 +5,625 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Repositories</title>
-    <link href="/static/style.css" rel="stylesheet">
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1, h2 {
+            
+            color: #58a6ff;
+        }
+
+        a.button {
+            background-color: #2d81f7;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        a.button:hover {
+            background-color: #1c65d8;
+        }
+
+        .header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        gap: 30px;
+        margin-bottom: 50px;
+        text-align: center;
+    }
+
+    @media (min-width: 768px) {
+        .header {
+            flex-direction: row;
+            align-items: flex-end;
+            text-align: left;
+        }
+    }
+
+    h1 {
+        font-size: 3em; /* 72px */
+        margin: 0;
+        line-height: 1.1;
+        color: #1b487b;
+        text-shadow: 0 0 15px rgba(88, 166, 255, 0.3);
+        background: linear-gradient(90deg, #58a6ff, #79c0ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        letter-spacing: -1px;
+        position: relative;
+        display: inline-block;
+    }
+
+    h1 span {
+        color: #79c0ff;
+        text-shadow: 0 0 20px rgba(121, 192, 255, 0.4);
+    }
+
+   
+   
+
+    .section-title {
+        font-size: 3.5rem; /* 56px */
+        color: transparent;
+        background: linear-gradient(90deg, #58a6ff, #79c0ff, #7ee787);
+        -webkit-background-clip: text;
+        background-clip: text;
+        text-align: center;
+        margin: 60px 0 40px;
+        position: relative;
+        padding-bottom: 20px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 25%;
+        width: 50%;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, #58a6ff, #7ee787, transparent);
+        border-radius: 2px;
+    }
+
+    .button {
+        background: linear-gradient(135deg, #2d81f7, #58a6ff);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 1.25rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(45, 129, 247, 0.3);
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .button:hover {
+        background: linear-gradient(135deg, #1c65d8, #2d81f7);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(45, 129, 247, 0.4);
+    }
+
+        @media (min-width: 640px) {
+            .header {
+                flex-direction: row;
+            }
+        }
+
+        .section-title {
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 8px;
+            margin-top: 40px;
+            font-size: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 100%;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-image: radial-gradient(circle, #58a6ff 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: center;
+        }
+
+        .card:hover {
+            width: 90%;
+            min-height: 400px;
+            max-height: 80vh;
+            transform: translateY(-15px) scale(1.05);
+            z-index: 10;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            background-image: none;
+        }
+
+        .card-initial {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card:hover .card-initial {
+            opacity: 0;
+            transform: translateY(-20px);
+            height: 0;
+        }
+
+        .repo-name {
+            color: #79c0ff;
+            font-size: 28px;
+            margin: 0;
+            position: relative;
+            text-align: center;
+        }
+
+        .repo-emoji {
+            font-size: 60px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .card-content {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            bottom: 30px;
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.5s ease;
+            overflow: hidden;
+        }
+
+        .card:hover .card-content {
+            opacity: 1;
+        }
+
+        .scrollable-content {
+            overflow-y: auto;
+            padding-right: 10px;
+            flex-grow: 1;
+            scrollbar-width: thin;
+            scrollbar-color: #30363d #161b22;
+        }
+
+        .scrollable-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-track {
+            background: #161b22;
+            border-radius: 4px;
+        }
+
+        .scrollable-content::-webkit-scrollbar-thumb {
+            background-color: #30363d;
+            border-radius: 4px;
+        }
+
+        .info-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 100%;
+            padding-bottom: 20px;
+        }
+
+        .info-section {
+            background: rgba(13, 17, 23, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+        }
+
+        .info-title {
+            font-weight: bold;
+            color: #58a6ff;
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-content {
+            font-size: 15px;
+            color: #8b949e;
+            line-height: 1.6;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            background: rgba(48, 54, 61, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .info-item-title {
+            font-weight: bold;
+            color: #79c0ff;
+            margin-bottom: 5px;
+        }
+
+        .info-item-content {
+            font-size: 14px;
+        }
+
+        .languages-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .language-item {
+            background: rgba(48, 54, 61, 0.3);
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .language-percent {
+            color: #7ee787;
+            font-size: 0.9em;
+        }
+
+        .files-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .file-item {
+            background: rgba(48, 54, 61, 0.3);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #2d81f7;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 20px;
+            position: sticky;
+            bottom: 0;
+        }
+
+        button:hover {
+            background-color: #1c65d8;
+        }
+
+        /* Shutter animation overlays */
+        .shutter-top, .shutter-bottom {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #010409;
+            z-index: 999;
+            transform: translateY(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .shutter-bottom {
+            top: auto;
+            bottom: 0;
+            transform: translateY(100%);
+        }
+
+        .shutter-top.active {
+            transform: translateY(0);
+        }
+
+        .shutter-bottom.active {
+            transform: translateY(0);
+        }
+    .shape-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: rgba(13, 17, 23, 0.95);
+  }
+  
+  .shape {
+    position: absolute;
+    opacity: 0.15;
+    filter: blur(0.5px);
+    animation: float 15s infinite ease-in-out;
+  }
+  
+  .triangle {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 30px 50px 30px;
+    border-color: transparent transparent #58a6ff transparent;
+  }
+  
+  .square {
+    width: 50px;
+    height: 50px;
+    background: #79c0ff;
+  }
+  
+  .circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #7ee787;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(5deg);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.15;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans">
-    <div class="max-w-7xl mx-auto p-6">
+<body>
+   <div class="shape-container" id="shapeContainer"></div>
+
+    <!-- Shutter Overlays -->
+    <div class="shutter-top" id="shutterTop"></div>
+    <div class="shutter-bottom" id="shutterBottom"></div>
+
+    <div class="container">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <h1 class="text-3xl font-bold font-mono">
-                Welcome, <span class="text-indigo-600">{{ user.username }}</span> 
-            </h1>
-            <a href="{% url 'logout' %}" class="bg-black text-white px-4 py-2 rounded-xl text-sm hover:bg-gray-800 transition">
-                Logout
-            </a>
+        <div class="header">
+            <h1> &lt;Hello/&gt; , <span>{{ user.username }}</span></h1>
+            <a href="{% url 'logout' %}" class="button">Logout</a>
         </div>
 
         <!-- Section Title -->
-        <h2 class="mt-8 text-xl font-semibold">Your GitHub Repositories:</h2>
+        <h2 class="section-title">Your GitHub Repositories:</h2>
 
         <!-- Repository Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        <div class="grid">
             {% for repo in repos %}
-            <div class="bg-white shadow-md rounded-2xl p-6 border border-gray-200">
-                <h3 class="text-xl font-bold text-indigo-700 mb-1">{{ repo.name }}</h3>
-                <p class="text-sm text-gray-500 mb-3">Created on: {{ repo.created|date:"Y-m-d" }}</p>
-
-                <!-- Languages -->
-                <div class="mb-4">
-                    <p class="font-medium text-sm text-gray-700">Languages Used:</p>
-                    <ul class="list-disc list-inside text-sm text-gray-600">
-                        {% for lang, percent in repo.languages.items %}
-                        <li>{{ lang }} – {{ percent }}%</li>
-                        {% endfor %}
-                    </ul>
+            <div class="card">
+                <div class="card-initial">
+                    <div class="repo-emoji">
+                        {% cycle '👨‍💻' '💻' '🔮' '📊' '🧩' '⚙️' '🌐' '📦' '🧠' %}
+                    </div>
+                    <h3 class="repo-name">{{ repo.name }}</h3>
                 </div>
+                
+                <div class="card-content">
+                    <div class="scrollable-content">
+                        <div class="info-container">
+                            <!-- Metadata Section -->
+                            <div class="info-section">
+                                <p class="info-title">📊 Repository Info</p>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <div class="info-item-title">📅 Created</div>
+                                        <div class="info-item-content">{{ repo.created|date:"F j, Y" }}</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-item-title">🔄 Updated</div>
+                                        <div class="info-item-content">{{ repo.updated|date:"F j, Y" }}</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-item-title">📏 Size</div>
+                                        <div class="info-item-content">{{ repo.size }} KB</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Languages Section -->
+                            <div class="info-section">
+                                <p class="info-title">🧠 Languages</p>
+                                <div class="info-content">
+                                    <ul class="languages-list">
+                                        {% for lang, percent in repo.languages.items %}
+                                        <li class="language-item">
+                                            <span>{{ lang }}</span>
+                                            <span class="language-percent">{{ percent }}%</span>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- Files Section -->
+                            <div class="info-section">
+                                <p class="info-title">📁 Files</p>
+                                <div class="info-content">
+                                    <ul class="files-list">
+                                        {% for file in repo.files %}
+                                        <li class="file-item">{{ file }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- Description Section -->
+                            <div class="info-section">
+                                <p class="info-title">📝 Description</p>
+                                <div class="info-content">
+                                    {{ repo.description|default:"No description provided" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Project Files -->
-                <div class="mb-4">
-                    <p class="font-medium text-sm text-gray-700">Project Files:</p>
-                    <ul class="list-disc list-inside text-sm text-gray-600">
-                        {% for file in repo.files %}
-                        <li>{{ file }}</li>
-                        {% endfor %}
-                    </ul>
+                    <!-- Verify Button -->
+                    <form method="POST" action="/verify-repo/" class="verify-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="repo_name" value="{{ repo.name }}">
+                        <button type="submit">🛡️ Verify Repository</button>
+                    </form>
                 </div>
-
-                <!-- Verify Button -->
-                <form method="POST" action="/verify-repo/" class="mt-4">
-                    {% csrf_token %}
-                    <input type="hidden" name="repo_name" value="{{ repo.name }}">
-                    <button class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition">
-                        🛡️ Verify
-                    </button>
-                </form>
             </div>
             {% empty %}
-            <p class="text-gray-600 mt-4 col-span-full text-center">No repositories found.</p>
+            <p style="text-align: center; grid-column: 1 / -1;">No repositories found.</p>
             {% endfor %}
         </div>
 
-        <!-- Logout Form (alternative position if needed) -->
-        <form action="{% url 'landing' %}" method="post" class="mt-10 text-center">
+        <!-- Logout Form (Alt) -->
+        <form action="{% url 'landing' %}" method="post" class="logout-alt">
             {% csrf_token %}
-            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
-                Logout
-            </button>
+            <button type="submit">Logout</button>
         </form>
-    </div>
+   
+
+    <!-- JavaScript for Animation -->
+    <script>
+        document.querySelectorAll(".verify-form").forEach(form => {
+            form.addEventListener("submit", function (e) {
+                const top = document.getElementById("shutterTop");
+                const bottom = document.getElementById("shutterBottom");
+
+                // Show shutters
+                top.classList.add("active");
+                bottom.classList.add("active");
+
+                // Optional: delay actual form submission
+                e.preventDefault();
+                setTimeout(() => {
+                    form.submit(); // Continue with real submit after animation
+                }, 1200);
+            });
+        });
+
+        // Add emoji based on repo name hash
+        document.querySelectorAll('.card').forEach(card => {
+            const emojis = ['👨‍💻', '💻', '🔮', '📊', '🧩', '⚙️', '🌐', '📦', '🧠', '🔧', '📚', '🚀'];
+            const repoName = card.querySelector('.repo-name').textContent;
+            const emojiIndex = Math.abs(hashCode(repoName)) % emojis.length;
+            card.querySelector('.repo-emoji').textContent = emojis[emojiIndex];
+        });
+
+        // Simple string hash function
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return hash;
+        }
+
+         document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('shapeContainer');
+    const shapeTypes = ['triangle', 'square', 'circle'];
+    const colors = ['#58a6ff', '#79c0ff', '#7ee787', '#d2a8ff', '#ff7b72'];
+    const shapeCount = 50; // Number of shapes to create
+    
+    for (let i = 0; i < shapeCount; i++) {
+      const shape = document.createElement('div');
+      const type = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+      const size = Math.random() * 40 + 20;
+      const duration = Math.random() * 20 + 10;
+      const delay = Math.random() * 5;
+      
+      shape.className = `shape ${type}`;
+      shape.style.left = `${Math.random() * 100}%`;
+      shape.style.top = `${Math.random() * 100}%`;
+      shape.style.animation = `float ${duration}s infinite ${delay}s, pulse ${duration * 1.5}s infinite ${delay}s`;
+      shape.style.opacity = `${Math.random() * 0.1 + 0.1}`;
+      
+      // Custom styling per shape type
+      if (type === 'triangle') {
+        shape.style.borderWidth = `0 ${size/2}px ${size}px ${size/2}px`;
+        shape.style.borderColor = `transparent transparent ${colors[Math.floor(Math.random() * colors.length)]} transparent`;
+      } else {
+        shape.style.width = `${size}px`;
+        shape.style.height = `${size}px`;
+        shape.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      }
+      
+      // Random rotation
+      shape.style.transform = `rotate(${Math.random() * 360}deg)`;
+      
+      container.appendChild(shape);
+    }
+  });
+    </script>
 </body>
 </html>
-
