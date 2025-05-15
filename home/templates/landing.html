@@ -1,7 +1,400 @@
-<h1>Welcome to Proof of Skill</h1>
+<!DOCTYPE html>
+<html lang="en">
 
-<a href="{% url 'social:begin' 'github' %}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LogicAstra</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+<link rel="stylesheet" href="style.css">
+<lottie-player src="https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+<style>
+  :root {
+    --primary: #00d9ff;
+    --secondary: #0066ff;
+    --bg-dark: rgba(0, 0, 0, 0.6);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: url('Premium\ Vector\ _\ Black\ blue\ background_.jpeg') no-repeat center center/cover;
+    min-height: 100vh;
+    color: white;
+    overflow-x: hidden;
+  }
+
+  .navbar {
+    background: var(--bg-dark);
+    backdrop-filter: blur(15px);
+    padding: 20px 50px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    animation: slideDown 1s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  ul.list {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  ul.list li {
+    list-style: none;
+  }
+
+  ul.list li a {
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: all 0.4s ease;
+  }
+
+  ul.list li a i {
+    margin-right: 8px;
+    color: var(--primary);
+  }
+
+  ul.list li a:hover {
+    color: var(--primary);
+    text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary);
+    transform: scale(1.05);
+  }
+
+  .buttons {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1100;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .buttons a {
+    padding: 10px 25px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 1rem;
+    color: white;
+    transition: 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  .buttons a:hover {
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px var(--primary);
+  }
+
+  .hero {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+    animation: fadeIn 2s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .hero-logo {
+    text-align: center;
+    margin-top: 20px;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .hero-logo a {
+    position: relative;
+    font-size: 3rem;
+    font-weight: 900;
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .hero-logo a::before,
+  .hero-logo a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  .hero-logo a::before { top: -10px; }
+  .hero-logo a::after { bottom: -10px; }
+
+  .hero-logo a:hover {
+    color: var(--primary);
+    text-shadow: 0 0 10px var(--primary);
+  }
+
+  .hero-logo a:hover::before,
+  .hero-logo a:hover::after {
+    transform: scaleX(1);
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero h1 {
+    font-size: 3.5rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  }
+
+  .hero p {
+    font-size: 1.4rem;
+    max-width: 700px;
+    margin-bottom: 30px;
+    line-height: 1.8;
+    color: #f0f0f0;
+  }
+
+  .hero-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-buttons a {
+    padding: 10px 25px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 1rem;
+    color: white;
+    transition: 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+  }
+
+  .hero-buttons a:hover {
+    background: linear-gradient(135deg, var(--secondary), var(--primary));
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px var(--primary);
+  }
+
+  .section {
+    padding: 80px 20px;
+    text-align: center;
+    max-width: 1000px;
+    margin: 40px auto 0 auto;
+    background: var(--glass-bg);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px rgba(0, 217, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.5s ease;
+  }
+
+  .section:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 40px rgba(0, 217, 255, 0.3);
+  }
+
+  .section h2 {
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+    color: var(--primary);
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  }
+
+  .section p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #e0e0e0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px 20px;
+    background: rgba(0, 0, 0, 0.8);
+    font-size: 0.9rem;
+    color: #aaa;
+  }
+
+  footer a {
+    color: var(--primary);
+    margin: 0 8px;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+  }
+
+  footer a:hover {
+    color: #fff;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2.4rem;
+    }
+
+    .section h2 {
+      font-size: 2rem;
+    }
+
+    .navbar {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    ul.list {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .buttons {
+      top: 10px;
+      right: 10px;
+    }
+  }
+     @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+</style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <ul class="list">
+      <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="#about"><i class="fas fa-user"></i> About</a></li>
+      <li><a href="#services"><i class="fas fa-cogs"></i> Services</a></li>
+      <li><a href="#feature"><i class="fas fa-star"></i> Features</a></li>
+      <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="buttons">
+    <a href="#"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+    <a href="#"><i class="fas fa-user-plus"></i> Join</a>
+  </div>
+
+  <div class="hero-logo">
+    <a href="#">GitProofiX</a>
+  </div>
+
+  <section class="hero" id="home" data-aos="zoom-in">
+    <h1>Welcome to GitProofiX</h1>
+    <p>Unleash Innovation. Embrace the Future. Build with Passion.</p>
+    <div class="hero-buttons">
+      <a href="#"><i class="fas fa-rocket"></i> Get Started</a>
+      <a href="#"><i class="fas fa-book"></i> Learn More</a>
+    </div>
+  </section>
+
+  <section class="section" id="about" data-aos="fade-right">
+    <h2>About Us</h2>
+    <p>At LogicAstra, we fuse creativity and technology to craft digital experiences that inspire. With a futuristic vision and a human touch, we are revolutionizing the tech landscape one innovation at a time.</p>
+  </section>
+
+  <section class="section" id="services" data-aos="fade-left">
+    <h2>Our Services</h2>
+    <p>From AI-powered solutions to customized software development, we deliver cutting-edge services tailored to your needs. Partner with us for innovation and excellence.</p>
+  </section>
+
+  <section class="section" id="feature" data-aos="flip-up">
+    <h2>Features</h2>
+    <p>Our platform boasts unique features like seamless integration, advanced analytics, and user-friendly interfaces designed to enhance your digital journey. Explore the possibilities with LogicAstra.</p>
+  </section>
+
+  <section class="section" id="contact" data-aos="fade-up">
+    <h2>Contact Us</h2>
+    <p>Have questions or need assistance? Reach out to our support team anytime. Connect with us via email at support@logicastra.com or call us at (123) 456-7890.</p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 GitProofiX. All rights reserved. Follow us on
+      <a href="#"><i class="fab fa-facebook"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+    </p>
+  </footer>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+  </script>
+
+  <a href="{% url 'social:begin' 'github' %}">
     <button style="padding: 10px 20px; background-color: #24292e; color: white; border: none; border-radius: 5px;">
         🔗 Login with GitHub
     </button>
 </a>
+
+</body>
+
+</html>
+

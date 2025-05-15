@@ -91,6 +91,12 @@ def get_repos(request):
 
 from .utils import calculate_repo_score, get_score_input  # Use the scoring + helper logic
 
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from social_django.models import UserSocialAuth
+from django.shortcuts import render, redirect
+import requests
+
 @csrf_exempt
 @login_required
 def verify_repo(request):
@@ -167,4 +173,4 @@ def verify_repo(request):
             print("🔴 Verification Error:", str(e))  # Optional debug log
             return render(request, 'error.html', {'message': str(e)})
 
-    return redirect('home')
+    return redirect('home')    

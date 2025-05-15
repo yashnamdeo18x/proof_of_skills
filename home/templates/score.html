@@ -1,17 +1,20 @@
-<h1>🔍 Verification Result for "{{ repo }}"</h1>
+<!-- home/templates/home/score.html -->
 
-<p><strong>Skill Score:</strong> {{ score }}%</p>
+<h1>🧠 Repo Score Result</h1>
+
+<p><strong>Repository:</strong> {{ repo }}</p>
+<p><strong>Score:</strong> {{ score }} / 100</p>
 <p><strong>Verdict:</strong> {{ verdict }}</p>
 
 {% if show_mint %}
-    <form action="/mint-nft/" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="repo_name" value="{{ repo }}">
-        <input type="hidden" name="score" value="{{ score }}">
-        <button type="submit">🪙 Mint NFT</button>
-    </form>
+  <form action="{% url 'mint_nft' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="repo" value="{{ repo }}">
+    <button type="submit">🪙 Mint NFT as Proof of Skill</button>
+  </form>
 {% else %}
-    <p style="color: red;">❌ Not eligible to mint — originality score too low.</p>
+  <p>❌ Score is too low to mint NFT</p>
 {% endif %}
 
-<a href="/api/repos/">← Back to Dashboard</a>
+<br>
+<a href="/dashboard/">← Back to Dashboard</a>

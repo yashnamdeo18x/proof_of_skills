@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'social_django',
     'home',
+    'django_browser_reload',
 ]
+
+
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
