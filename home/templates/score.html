@@ -1,20 +1,235 @@
 <!-- home/templates/home/score.html -->
 
-<h1>🧠 Repo Score Result</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repo Score</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: Consolas, 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
 
-<p><strong>Repository:</strong> {{ repo }}</p>
-<p><strong>Score:</strong> {{ score }} / 100</p>
-<p><strong>Verdict:</strong> {{ verdict }}</p>
+        .container {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 20px;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
 
-{% if show_mint %}
-  <form action="{% url 'mint_nft' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="repo" value="{{ repo }}">
-    <button type="submit">🪙 Mint NFT as Proof of Skill</button>
-  </form>
-{% else %}
-  <p>❌ Score is too low to mint NFT</p>
-{% endif %}
+        h1 {
+            color: #58a6ff;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
 
-<br>
-<a href="/dashboard/">← Back to Dashboard</a>
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #c9d1d9;
+        }
+
+        button {
+            background-color: #2d81f7;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #1c65d8;
+        }
+
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 30px;
+            font-size: 16px;
+        }
+
+        /* Shutter overlays */
+        .shutter-top, .shutter-bottom {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #010409;
+            z-index: 999;
+            transition: transform 0.7s ease;
+        }
+
+        .shutter-top {
+            top: 0;
+            transform: translateY(0%);
+        }
+
+        .shutter-bottom {
+            bottom: 0;
+            transform: translateY(0%);
+        }
+
+        .shutter-top.opened {
+            transform: translateY(-100%);
+        }
+
+        .shutter-bottom.opened {
+            transform: translateY(100%);
+        }
+        .shape-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: rgba(13, 17, 23, 0.95);
+  }
+  
+  .shape {
+    position: absolute;
+    opacity: 0.15;
+    filter: blur(0.5px);
+    animation: float 15s infinite ease-in-out;
+  }
+  
+  .triangle {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 30px 50px 30px;
+    border-color: transparent transparent #58a6ff transparent;
+  }
+  
+  .square {
+    width: 50px;
+    height: 50px;
+    background: #79c0ff;
+  }
+  
+  .circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #7ee787;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(5deg);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.15;
+    }
+    50% {
+      opacity: 0.25;
+    }
+  }
+    </style>
+</head>
+<body>
+  <div class="shape-container" id="shapeContainer"></div>
+
+    <!-- Shutter overlay -->
+    <div class="shutter-top" id="shutterTop"></div>
+    <div class="shutter-bottom" id="shutterBottom"></div>
+
+    <div class="container">
+        <h1>🧠 Repo Score Result</h1>
+
+        <p><strong>📘 Repository:</strong> {{ repo }}</p>
+        <p><strong>⭐ Score:</strong> {{ score }} / 100</p>
+        <p><strong>📊 Verdict:</strong> {{ verdict }}</p>
+
+        {% if show_mint %}
+        <form action="{% url 'mint_nft' %}" method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <input type="hidden" name="repo" value="{{ repo }}">
+            <button type="submit">🪙 Mint NFT as Proof of Skill</button>
+        </form>
+        {% else %}
+        <p style="color: #f85149;">❌ Score is too low to mint NFT</p>
+        {% endif %}
+
+        <a class="back-link" href="/dashboard/">← Back to Dashboard</a>
+    </div>
+
+    <script>
+        // Opening animation
+        window.onload = () => {
+            const top = document.getElementById('shutterTop');
+            const bottom = document.getElementById('shutterBottom');
+            setTimeout(() => {
+                top.classList.add('opened');
+                bottom.classList.add('opened');
+            }, 100); // slight delay for effect
+        }
+
+         document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('shapeContainer');
+    const shapeTypes = ['triangle', 'square', 'circle'];
+    const colors = ['#58a6ff', '#79c0ff', '#7ee787', '#d2a8ff', '#ff7b72'];
+    const shapeCount = 50; // Number of shapes to create
+    
+    for (let i = 0; i < shapeCount; i++) {
+      const shape = document.createElement('div');
+      const type = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+      const size = Math.random() * 40 + 20;
+      const duration = Math.random() * 20 + 10;
+      const delay = Math.random() * 5;
+      
+      shape.className = `shape ${type}`;
+      shape.style.left = `${Math.random() * 100}%`;
+      shape.style.top = `${Math.random() * 100}%`;
+      shape.style.animation = `float ${duration}s infinite ${delay}s, pulse ${duration * 1.5}s infinite ${delay}s`;
+      shape.style.opacity = `${Math.random() * 0.1 + 0.1}`;
+      
+      // Custom styling per shape type
+      if (type === 'triangle') {
+        shape.style.borderWidth = `0 ${size/2}px ${size}px ${size/2}px`;
+        shape.style.borderColor = `transparent transparent ${colors[Math.floor(Math.random() * colors.length)]} transparent`;
+      } else {
+        shape.style.width = `${size}px`;
+        shape.style.height = `${size}px`;
+        shape.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      }
+      
+      // Random rotation
+      shape.style.transform = `rotate(${Math.random() * 360}deg)`;
+      
+      container.appendChild(shape);
+    }
+  });
+    </script>
+</body>
+</html>
