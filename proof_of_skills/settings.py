@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django_browser_reload',
 ]
 
+COPYLEAKS_EMAIL = 'babita6783@gmail.com'
+COPYLEAKS_API_KEY = '3abd4624-a677-4e9e-b1c7-6df5d272bb9d'
 
 
 AUTHENTICATION_BACKENDS = (

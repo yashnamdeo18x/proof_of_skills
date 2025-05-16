@@ -10,5 +10,6 @@ urlpatterns = [
     path("__reload__/", include("django_browser_reload.urls")),
     path('mint-nft/', views.mint_nft, name='mint_nft'),
     path('nft/metadata/<str:repo>/', views.nft_metadata, name='nft_metadata'),
+    path('logout/', views.logout_view, name='logout'),
+   
 ]
-

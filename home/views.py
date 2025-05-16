@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from social_django.models import UserSocialAuth
+from django.conf import settings
+import json
 
 
 
@@ -21,6 +23,12 @@ def home(request):
 
     return render(request, 'home.html', {'user': request.user})
 
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def logout_view(request):
+    logout(request)  # this logs the user out of Django session
+    return redirect('/landing.html')  # or redirect to your login page
 
 
 @login_required
@@ -216,3 +224,5 @@ def nft_metadata(request, repo):
     }
 
     return JsonResponse(metadata)
+
+
