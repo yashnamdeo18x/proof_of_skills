@@ -803,6 +803,44 @@
   });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+
+<script>
+document.querySelector("form").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    // Check for MetaMask
+    if (typeof window.ethereum === 'undefined') {
+        alert("Please install MetaMask to mint the NFT.");
+        return;
+    }
+
+    // Connect to MetaMask
+    const web3 = new Web3(window.ethereum);
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+
+    // Contract setup
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+    // Get the repo name from hidden input
+    const repo = document.querySelector('input[name="repo"]').value;
+
+    // Construct token URI endpoint (change this to match your backend URL logic)
+    const tokenURI = `/nft_metadata/${repo}/`;
+
+    try {
+        const result = await contract.methods.mintNFT(account, tokenURI).send({ from: account });
+        console.log("NFT Minted:", result);
+        alert("🎉 NFT Minted Successfully!");
+    } catch (err) {
+        console.error("Minting Failed:", err);
+        alert("❌ Failed to mint NFT.");
+    }
+});
+</script>
+
         {% else %}
         <p style="color: #f85149;">❌ Score is too low to mint NFT</p>
         {% endif %}

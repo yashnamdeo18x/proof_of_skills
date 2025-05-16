@@ -186,7 +186,6 @@ def mint_nft(request):
     # You'll build this part later
     
     request.session.pop("score", None)
- 
     return HttpResponse("Minting NFT... coming soon!")
 
 
