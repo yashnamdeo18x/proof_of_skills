@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import requests
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from social_django.models import UserSocialAuth
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -161,7 +161,11 @@ def verify_repo(request):
 
             score_input = get_score_input(github_data, username, email)
             result = calculate_repo_score(score_input)
-
+            
+            request.session["score"] = result["score"]
+            request.session["verdict"] = result["verdict"]
+            request.session["repo_name"] = repo_name
+            
             return render(request, 'score.html', {
                 'repo': repo_name,
                 'score': result['score'],
@@ -174,3 +178,42 @@ def verify_repo(request):
             return render(request, 'error.html', {'message': str(e)})
 
     return redirect('home')    
+
+
+@csrf_exempt
+@login_required
+def mint_nft(request):
+    # You'll build this part later
+    
+    request.session.pop("score", None)
+ 
+    return HttpResponse("Minting NFT... coming soon!")
+
+
+@csrf_exempt
+@login_required
+def nft_metadata(request, repo):
+    user = request.user
+    username = user.username
+    email = user.email
+
+    # Fetch score from session
+    score = request.session.get("score", 0)
+    
+    
+    
+    image_url = f"https://api.dicebear.com/7.x/bottts/svg?seed={username}"
+
+    metadata = {
+        "name": f"Proof of Skill NFT - {repo}",
+        "description": f"Verified skill badge for {username} based on GitHub repo '{repo}'.",
+        "image": image_url,
+        "attributes": [
+            {"trait_type": "Developer", "value": username},
+            {"trait_type": "Score", "value": score},
+            {"trait_type": "Repository", "value": repo},
+            {"trait_type": "Verified By", "value": "GITProofiX"},
+        ]
+    }
+
+    return JsonResponse(metadata)
