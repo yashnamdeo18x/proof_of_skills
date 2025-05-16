@@ -15,8 +15,8 @@
     :root {
       --primary: #4da6ff;
       --primary-dark: #1a73e8;
-      --secondary: #ff4d8d;
-      --accent: #00ffaa;
+      --secondary: #000000;
+      --accent: #000000;
       --dark: #0a0e17;
       --darker: #060913;
       --glass-bg: rgba(255, 255, 255, 0.05);
@@ -340,10 +340,12 @@
     }
 
     .hero-animation {
-      width: 500px;
-      z-index: 0;
-      filter: drop-shadow(0 10px 20px rgba(77, 166, 255, 0.3));
-    }
+    width: 100%;
+    max-width: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
     .features-container {
       display: grid;
@@ -417,7 +419,7 @@
   }
 
   .animated-img {
-    width: 400px;
+    width: 800px;
     max-width: 90%;
     display: block;
     margin: auto;
