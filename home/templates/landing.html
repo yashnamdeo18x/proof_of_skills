@@ -160,11 +160,14 @@
       gap: 10px;
     }
 
-    .math-logo {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-right: 5px;
-    }
+    .math-logo img {
+  height: 43px;
+  vertical-align: middle;
+  margin-right: 1px;
+  margin-bottom: 8px;
+  margin-top: 2px;
+}
+
 
     .list {
       display: flex;
@@ -398,14 +401,27 @@
     }
 
     .float-animation {
-      animation: float 8s ease-in-out infinite;
-    }
+    animation: float 3s ease-in-out infinite;
+  }
 
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-25px); }
-      100% { transform: translateY(0px); }
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
     }
+    50% {
+      transform: translateY(-15px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  .animated-img {
+    width: 400px;
+    max-width: 90%;
+    display: block;
+    margin: auto;
+  }
 
     .badge-rotate {
       animation: rotateBadge 10s linear infinite;
@@ -833,9 +849,12 @@
   <nav class="navbar" id="navbar">
     <div class="hero-logo">
       <a href="#">
-        <span class="math-logo">\(\frac{8}{9}\)</span> GitProofiX
+        <span class="math-logo">
+          <img src="static/image/logogit.png" alt="logo">
+        </span>
+        GitProofiX
       </a>
-    </div>
+    </div>    
     
     <ul class="list">
       <li><a href="#home">Home</a></li>
@@ -861,8 +880,8 @@
       </div>
     </div>
     <div class="hero-animation float-animation">
-      <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_6wutsrox.json" background="transparent" speed="1" loop autoplay></lottie-player>
-    </div>
+      <img src="static/image/side.png" alt="Developer Scene" class="animated-img">
+    </div>    
   </section>
 
 
