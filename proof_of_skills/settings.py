@@ -96,7 +96,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'proof_of_skill_db',
         'USER': 'root',
-        'PASSWORD': 'Arpit2007@',
+        'PASSWORD': '@Yash514',
         'HOST': 'localhost',
         'PORT': '3306',
     }
