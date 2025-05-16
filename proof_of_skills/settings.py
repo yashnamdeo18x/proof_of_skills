@@ -96,11 +96,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'proof_of_skill_db',
         'USER': 'root',
-        'PASSWORD': '@Yash514',
+        'PASSWORD': 'Arpit2007@',
         'HOST': 'localhost',
         'PORT': '3306',
     }
-}
+ }
 
 
 
