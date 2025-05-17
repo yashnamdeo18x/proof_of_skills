@@ -41,7 +41,16 @@ INSTALLED_APPS = [
     'social_django',
     'home',
     'django_browser_reload',
+    'channels'
 ]
+
+ASGI_APPLICATION = 'your_project_name.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 
 
@@ -96,7 +105,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'proof_of_skill_db',
         'USER': 'root',
-        'PASSWORD': 'Arpit2007@',
+        'PASSWORD': '@Yash514',
         'HOST': 'localhost',
         'PORT': '3306',
     }
