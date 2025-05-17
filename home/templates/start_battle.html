@@ -1,20 +1,481 @@
-<h2>Start a Coding Battle</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Clash | Start Battle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff9d;
+            --secondary: #00b8ff;
+            --dark: #0a192f;
+            --darker: #020c1b;
+            --accent: #ff2d75;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(0, 255, 157, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(0, 184, 255, 0.1) 0%, transparent 50%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h2 {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--primary);
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+            animation: pulse 2s infinite alternate;
+        }
+        
+        .battle-card {
+            background: rgba(10, 25, 47, 0.8);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
+            backdrop-filter: blur(5px);
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .battle-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent 45%,
+                rgba(0, 255, 157, 0.1) 50%,
+                transparent 55%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        
+        .battle-card:hover {
+            transform: translateY(-5px) rotateX(5deg);
+            box-shadow: 0 10px 30px rgba(0, 255, 157, 0.4);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            background: rgba(2, 12, 27, 0.7);
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+        }
+        
+        select option {
+            background: var(--darker);
+        }
+        
+        .difficulty-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .difficulty-option {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+        }
+        
+        .difficulty-option:hover {
+            transform: translateY(-3px);
+        }
+        
+        .difficulty-option.easy {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: rgba(0, 255, 157, 0.3);
+        }
+        
+        .difficulty-option.medium {
+            background: rgba(0, 184, 255, 0.1);
+            border-color: rgba(0, 184, 255, 0.3);
+        }
+        
+        .difficulty-option.hard {
+            background: rgba(255, 45, 117, 0.1);
+            border-color: rgba(255, 45, 117, 0.3);
+        }
+        
+        .difficulty-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .difficulty-option input[type="radio"]:checked + .option-content {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px currentColor;
+        }
+        
+        .difficulty-option.easy input[type="radio"]:checked + .option-content {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .difficulty-option.medium input[type="radio"]:checked + .option-content {
+            color: var(--secondary);
+            border-color: var(--secondary);
+        }
+        
+        .difficulty-option.hard input[type="radio"]:checked + .option-content {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        .option-content {
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid currentColor;
+            transition: all 0.3s ease;
+        }
+        
+        .option-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+        }
+        
+        .option-time {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .battle-button {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: var(--darker);
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 255, 157, 0.4);
+        }
+        
+        .battle-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 157, 0.6);
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+        }
+        
+        .battle-button:active {
+            transform: translateY(1px);
+        }
+        
+        .battle-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent 45%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 55%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .battle-button:hover::after {
+            opacity: 1;
+        }
+        
+        .floating-code {
+            position: absolute;
+            opacity: 0.1;
+            font-family: monospace;
+            font-size: 0.8rem;
+            z-index: 0;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(0, 255, 157, 0.8), 0 0 30px rgba(0, 255, 157, 0.3);
+            }
+        }
+        
+        @keyframes shine {
+            0% {
+                transform: rotate(30deg) translate(-30%, -30%);
+            }
+            100% {
+                transform: rotate(30deg) translate(30%, 30%);
+            }
+        }
+        
+        .vs-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+        }
+        
+        .vs-container::before, .vs-container::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--secondary), transparent);
+        }
+        
+        .vs {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--accent);
+            padding: 0 1rem;
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(255, 45, 117, 0.5);
+            animation: pulse 1.5s infinite alternate;
+        }
+        
+        .player-card {
+            background: rgba(2, 12, 27, 0.5);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--secondary);
+            transition: all 0.3s ease;
+            flex: 1;
+            margin: 0 1rem;
+        }
+        
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 184, 255, 0.3);
+        }
+        
+        .player-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--darker);
+            margin: 0 auto 1rem;
+            border: 2px solid var(--primary);
+            overflow: hidden;
+        }
+        
+        .player-name {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .random-match {
+            color: var(--secondary);
+            font-style: italic;
+            margin-top: 1rem;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .difficulty-options {
+                flex-direction: column;
+            }
+            
+            .vs-container {
+                flex-direction: column;
+            }
+            
+            .player-card {
+                margin: 1rem 0;
+                width: 100%;
+            }
+            
+            .vs {
+                transform: rotate(90deg);
+                margin: 1rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Floating code elements in background -->
+        <div class="floating-code" style="top: 10%; left: 5%;">function battle() {</div>
+        <div class="floating-code" style="top: 20%; left: 80%;">const winner = true;</div>
+        <div class="floating-code" style="top: 30%; left: 15%;">if (skill > opponent) {</div>
+        <div class="floating-code" style="top: 40%; left: 70%;">return "Victory!";</div>
+        <div class="floating-code" style="top: 50%; left: 25%;">}</div>
+        <div class="floating-code" style="top: 60%; left: 60%;">console.log("Code clash!");</div>
+        <div class="floating-code" style="top: 70%; left: 10%;">while (coding) {</div>
+        <div class="floating-code" style="top: 80%; left: 75%;">keepImproving();</div>
+        
+        <h2>CODE CLASH</h2>
+        
+        <form method="POST" action="{% url 'start_battle' %}" class="battle-card">
+            {% csrf_token %}
+            
+            <label>CHOOSE YOUR DIFFICULTY</label>
+            <div class="difficulty-options">
+                <div class="difficulty-option easy">
+                    <input type="radio" id="easy" name="difficulty" value="easy" required checked>
+                    <div class="option-content">
+                        <div class="option-title">EASY</div>
+                        <div class="option-time">20 min challenge</div>
+                    </div>
+                </div>
+                
+                <div class="difficulty-option medium">
+                    <input type="radio" id="medium" name="difficulty" value="medium">
+                    <div class="option-content">
+                        <div class="option-title">MEDIUM</div>
+                        <div class="option-time">30 min challenge</div>
+                    </div>
+                </div>
+                
+                <div class="difficulty-option hard">
+                    <input type="radio" id="hard" name="difficulty" value="hard">
+                    <div class="option-content">
+                        <div class="option-title">HARD</div>
+                        <div class="option-time">40 min challenge</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="vs-container">
+                <div class="player-card">
+                    <div class="player-avatar">
+                        <!-- You can replace this with dynamic user avatar -->
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="40" r="20" fill="#00ff9d"/>
+                            <circle cx="50" cy="85" r="30" fill="#00ff9d"/>
+                        </svg>
+                    </div>
+                    <div class="player-name">YOU</div>
+                </div>
+                
+                <div class="vs">VS</div>
+                
+                <div class="player-card">
+                    <div class="player-avatar">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="40" r="20" fill="#ff2d75"/>
+                            <circle cx="50" cy="85" r="30" fill="#ff2d75"/>
+                        </svg>
+                    </div>
+                    <div class="player-name">OPPONENT</div>
+                </div>
+            </div>
+            
+            <label>CHALLENGE SPECIFIC PLAYER (OPTIONAL)</label>
+            <input type="text" name="github_username" placeholder="Enter GitHub username...">
+            <div class="random-match">Leave empty for random matchmaking</div>
+            
+            <br>
+            
+            <button type="submit" class="battle-button">START BATTLE</button>
+        </form>
+    </div>
 
-<form method="POST" action="{% url 'start_battle' %}">
-  {% csrf_token %}
-  <label>Choose Difficulty:</label>
-  <select name="difficulty" required>
-    <option value="easy">Easy (20 min)</option>
-    <option value="medium">Medium (30 min)</option>
-    <option value="hard">Hard (40 min)</option>
-  </select>
-
-  <br><br>
-
-  <label>Challenge a developer by GitHub username (optional):</label>
-  <input type="text" name="github_username" placeholder="Leave empty for random matchmaking">
-
-  <br><br>
-
-  <button type="submit">Start Battle</button>
-</form>
+    <script>
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const difficultyOptions = document.querySelectorAll('.difficulty-option');
+            
+            difficultyOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove checked state from all options
+                    difficultyOptions.forEach(opt => {
+                        opt.querySelector('input').checked = false;
+                    });
+                    
+                    // Set checked state for clicked option
+                    this.querySelector('input').checked = true;
+                });
+            });
+            
+            // Add typing animation effect to input
+            const githubInput = document.querySelector('input[name="github_username"]');
+            githubInput.addEventListener('focus', function() {
+                this.style.boxShadow = '0 0 15px rgba(0, 255, 157, 0.5)';
+            });
+            
+            githubInput.addEventListener('blur', function() {
+                this.style.boxShadow = '';
+            });
+        });
+    </script>
+</body>
+</html>

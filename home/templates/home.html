@@ -649,10 +649,8 @@
         <!-- Logout Form (Alt) -->
         <form action="{% url 'landing' %}" method="post" class="logout-alt">
             {% csrf_token %}
-            <button type="submit"><a href="logout/">Logout</button>
+            <button type="submit"><a href="logout/">Dashboard</button>
         </form>
-   
-
     <!-- JavaScript for Animation -->
     <script>
         document.querySelectorAll(".verify-form").forEach(form => {

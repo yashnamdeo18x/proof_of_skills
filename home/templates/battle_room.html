@@ -1,49 +1,831 @@
-<h2>Battle Room: {{ room.room_name }}</h2>
-<p><b>Question:</b> {{ room.question.title }}</p>
-<pre>{{ room.question.description }}</pre>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Clash: {{ room.room_name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fira+Code:wght@400;500&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff2d75;
+            --secondary: #00f2fe;
+            --dark: #0f0f1a;
+            --light: #e0e0ff;
+            --success: #00ff88;
+            --danger: #ff3860;
+            --warning: #ffdd57;
+            --neon-blue: #00f2fe;
+            --neon-pink: #ff2d75;
+        }
+        
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 45, 117, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.1) 0%, transparent 20%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(to bottom, 
+                    rgba(0, 242, 254, 0.03) 1px, 
+                    transparent 1px);
+            background-size: 100% 2px;
+            pointer-events: none;
+            z-index: 0;
+            animation: scanline 10s linear infinite;
+        }
+        
+        @keyframes scanline {
+            from { background-position: 0 0; }
+            to { background-position: 0 100%; }
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+            box-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-blue);
+            animation: borderPulse 3s ease infinite alternate;
+        }
+        
+        @keyframes borderPulse {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .room-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--neon-pink), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 5px rgba(255, 45, 117, 0.5);
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 5px rgba(255, 45, 117, 0.5); }
+            to { text-shadow: 0 0 15px rgba(255, 45, 117, 0.8), 0 0 20px rgba(0, 242, 254, 0.5); }
+        }
+        
+        .timer {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background-color: rgba(15, 15, 26, 0.8);
+            padding: 10px 25px;
+            border-radius: 50px;
+            border: 2px solid var(--warning);
+            box-shadow: 0 0 15px rgba(255, 221, 87, 0.3);
+            font-family: 'Press Start 2P', cursive;
+            position: relative;
+            overflow: hidden;
+            color: var(--warning);
+        }
+        
+        .timer::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right, 
+                rgba(255, 221, 87, 0) 0%, 
+                rgba(255, 221, 87, 0.1) 50%, 
+                rgba(255, 221, 87, 0) 100%
+            );
+            transform: rotate(30deg);
+            animation: timerShine 3s infinite;
+        }
+        
+        @keyframes timerShine {
+            0% { transform: rotate(30deg) translate(-30%, -30%); }
+            100% { transform: rotate(30deg) translate(30%, 30%); }
+        }
+        
+        .question-panel {
+            background: rgba(15, 15, 26, 0.8);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--neon-pink);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .question-panel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
+        }
+        
+        .question-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 45, 117, 0.05) 0%,
+                rgba(0, 242, 254, 0.05) 100%
+            );
+            pointer-events: none;
+        }
+        
+        .question-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--neon-blue);
+            display: flex;
+            align-items: center;
+        }
+        
+        .question-title::before {
+            content: '❯';
+            color: var(--neon-pink);
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .question-description {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.6;
+            border: 1px solid rgba(0, 242, 254, 0.1);
+            position: relative;
+        }
+        
+        .question-description::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--neon-pink), var(--neon-blue));
+        }
+        
+        .editor-container {
+            position: relative;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: perspective(500px) rotateX(0deg);
+            transition: transform 0.5s ease;
+        }
+        
+        .editor-container:hover {
+            transform: perspective(500px) rotateX(1deg);
+        }
+        
+        #code-editor {
+            width: 100%;
+            min-height: 350px;
+            background: #121220;
+            color: #e0e0ff;
+            font-family: 'Fira Code', monospace;
+            font-size: 15px;
+            line-height: 1.6;
+            padding: 20px;
+            border: none;
+            resize: vertical;
+            tab-size: 4;
+            outline: none;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            border-left: 3px solid var(--neon-pink);
+            border-right: 3px solid var(--neon-blue);
+        }
+        
+        #code-editor:focus {
+            box-shadow: inset 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+        
+        .editor-header {
+            background: linear-gradient(to right, #1a1a2e, #16213e);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+        }
+        
+        .editor-dots {
+            display: flex;
+            margin-right: 15px;
+        }
+        
+        .editor-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .editor-dot.red { background: #ff5f56; }
+        .editor-dot.yellow { background: #ffbd2e; }
+        .editor-dot.green { background: #27c93f; }
+        
+        .editor-filename {
+            font-family: 'Fira Code', monospace;
+            color: var(--light);
+            opacity: 0.7;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue));
+            color: var(--dark);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(255, 45, 117, 0.4);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            display: block;
+            margin: 0 auto;
+            transform: translateY(0);
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 45, 117, 0.6);
+        }
+        
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+        
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .submit-btn:disabled::before {
+            display: none;
+        }
+        
+        .status-panel {
+            background: rgba(15, 15, 26, 0.8);
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue), var(--neon-pink));
+            background-size: 200%;
+            border-radius: 10px;
+            opacity: 0;
+            transition: 0.5s;
+        }
+        
+        .status-panel.active::before {
+            opacity: 1;
+            animation: borderGlow 2s linear infinite;
+        }
+        
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .winner {
+            background: rgba(0, 15, 10, 0.7);
+            border-color: var(--success);
+            color: var(--success);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 255, 136, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+        }
+        
+        .player-badge {
+            display: inline-block;
+            background: rgba(0, 242, 254, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
+            margin: 0 15px;
+            border: 1px solid var(--neon-blue);
+            font-weight: 700;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .player-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 242, 254, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+        
+        .player-badge:hover::before {
+            left: 100%;
+        }
+        
+        .player-badge.you {
+            background: rgba(255, 45, 117, 0.1);
+            border-color: var(--neon-pink);
+            animation: badgePulse 2s infinite;
+        }
+        
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .floating-bits {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .bit {
+            position: absolute;
+            color: rgba(0, 242, 254, 0.5);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            animation: float linear infinite;
+            user-select: none;
+        }
+        
+        @keyframes float {
+            to { transform: translateY(-100vh); }
+        }
+        
+        .hacker-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hacker-effect::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: var(--neon-blue);
+            overflow: hidden;
+            animation: glitch 3s infinite alternate;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        }
+        
+        .hacker-effect::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: var(--neon-pink);
+            overflow: hidden;
+            animation: glitch 2s infinite alternate-reverse;
+            clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
+        
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: var(--neon-blue);
+            margin-left: 5px;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+        
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .timer {
+                margin-top: 15px;
+                font-size: 1.3rem;
+            }
+            
+            .room-title {
+                font-size: 1.5rem;
+            }
+            
+            .submit-btn {
+                width: 100%;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="floating-bits" id="floating-bits"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="room-title hacker-effect" data-text="⚡ CODE CLASH: {{ room.room_name }}">⚡ CODE CLASH: {{ room.room_name }}</div>
+            <div class="timer" id="timer">⏳ {{ room.time_limit }}:00</div>
+        </div>
+        
+        <div class="question-panel">
+            <div class="question-title">CHALLENGE: {{ room.question.title }}</div>
+            <div class="question-description">{{ room.question.description }}</div>
+        </div>
+        
+        <div class="editor-container">
+            <div class="editor-header">
+                <div class="editor-dots">
+                    <div class="editor-dot red"></div>
+                    <div class="editor-dot yellow"></div>
+                    <div class="editor-dot green"></div>
+                </div>
+                <div class="editor-filename">solution.{{ room.question.language || 'js' }}</div>
+            </div>
+            <textarea id="code-editor" placeholder="// Write your battle code here...\n// May the best hacker win!\n\nfunction solve() {\n  // Your brilliant solution here\n}"></textarea>
+        </div>
+        
+        <button class="submit-btn" onclick="submitCode()">
+            <span id="submit-text">SUBMIT SOLUTION</span>
+            <span class="terminal-cursor"></span>
+        </button>
+        
+        <div class="status-panel" id="status">
+            <span id="status-content">
+                <span class="player-badge you">{{ user.username }}</span>
+                <span>VS</span>
+                <span class="player-badge">OPPONENT</span>
+                <span class="terminal-cursor"></span>
+            </span>
+        </div>
+    </div>
 
-<textarea id="code-editor" rows="15" cols="80"></textarea>
-<br>
-<button onclick="submitCode()">Submit Code</button>
+    <script>
+        const roomName = "{{ room.room_name }}";
+        const username = "{{ user.username }}";
+        const socket = new WebSocket(`ws://${window.location.host}/ws/battle/${roomName}/`);
+        
+        // Create floating bits animation
+        function createFloatingBits() {
+            const container = document.getElementById('floating-bits');
+            const bits = ['0', '1', '{', '}', '(', ')', '[', ']', '<', '>', '/', '*', '#', '$'];
+            
+            for (let i = 0; i < 50; i++) {
+                const bit = document.createElement('div');
+                bit.className = 'bit';
+                bit.textContent = bits[Math.floor(Math.random() * bits.length)];
+                bit.style.left = Math.random() * 100 + 'vw';
+                bit.style.top = Math.random() * 100 + 'vh';
+                bit.style.animationDuration = 10 + Math.random() * 20 + 's';
+                bit.style.animationDelay = Math.random() * 5 + 's';
+                bit.style.opacity = Math.random() * 0.5 + 0.1;
+                container.appendChild(bit);
+            }
+        }
+        
+        createFloatingBits();
+        
+        // Typewriter effect for status
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+            function typing() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typing, speed);
+                } else {
+                    element.innerHTML += '<span class="terminal-cursor"></span>';
+                }
+            }
+            typing();
+        }
 
-<p id="timer"></p>
-<p id="status"></p>
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'winner') {
+                const statusPanel = document.getElementById('status');
+                statusPanel.classList.add('winner', 'active');
+                
+                const winMessage = `🏆 VICTORY: ${data.username.toUpperCase()} WINS THE DUEL! 🏆`;
+                typeWriter(document.getElementById('status-content'), winMessage, 30);
+                
+                document.getElementById('code-editor').disabled = true;
+                document.querySelector('.submit-btn').disabled = true;
+                
+                // Enhanced celebration for winner
+                if (data.username === username) {
+                    celebrateWin();
+                    document.querySelector('.player-badge.you').classList.add('winner');
+                }
+            }
+            
+            if (data.type === 'opponent_joined') {
+                const opponentBadge = document.querySelector('.player-badge:not(.you)');
+                opponentBadge.textContent = data.username;
+                opponentBadge.classList.add('active');
+                
+                const joinMessage = `⚡ ${data.username.toUpperCase()} HAS JOINED THE BATTLE!`;
+                typeWriter(document.getElementById('status-content'), joinMessage);
+            }
+        }
 
-<script>
-  const roomName = "{{ room.room_name }}";
-  const username = "{{ user.username }}";
-  const socket = new WebSocket(`ws://${window.location.host}/ws/battle/${roomName}/`);
+        function submitCode() {
+            const code = document.getElementById('code-editor').value;
+            if (!code.trim()) {
+                // Error animation
+                const editor = document.querySelector('.editor-container');
+                editor.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    editor.style.animation = '';
+                }, 500);
+                return;
+            }
+            
+            const btn = document.querySelector('.submit-btn');
+            btn.disabled = true;
+            const originalText = btn.querySelector('#submit-text').textContent;
+            
+            // Loading animation
+            let dots = '';
+            const loadingInterval = setInterval(() => {
+                dots = dots.length < 3 ? dots + '.' : '';
+                btn.querySelector('#submit-text').textContent = 'SUBMITTING' + dots;
+            }, 300);
+            
+            socket.send(JSON.stringify({
+                type: 'submit_code',
+                username: username,
+                code: code
+            }));
+            
+            setTimeout(() => {
+                clearInterval(loadingInterval);
+                btn.disabled = false;
+                btn.querySelector('#submit-text').textContent = originalText;
+            }, 2000);
+        }
 
-  socket.onmessage = function(event) {
-    const data = JSON.parse(event.data);
-    if (data.type === 'winner') {
-      document.getElementById('status').innerText = `🏆 Winner: ${data.username}`;
-      document.getElementById('code-editor').disabled = true;
-    }
-  }
-
-  function submitCode() {
-    const code = document.getElementById('code-editor').value;
-    socket.send(JSON.stringify({
-      type: 'submit_code',
-      username: username,
-      code: code
-    }));
-  }
-
-  // Countdown timer (20/30/40 min based on question level)
-  let timeLeft = {{ room.time_limit }} * 60;
-  const timer = document.getElementById('timer');
-  const interval = setInterval(() => {
-    if (timeLeft <= 0) {
-      clearInterval(interval);
-      timer.innerText = '⏰ Time Over!';
-      document.getElementById('code-editor').disabled = true;
-    } else {
-      const mins = Math.floor(timeLeft / 60);
-      const secs = timeLeft % 60;
-      timer.innerText = `⏳ ${mins}:${secs.toString().padStart(2, '0')}`;
-      timeLeft--;
-    }
-  }, 1000);
-</script>
+        // Countdown timer with sound effects (would need audio files)
+        let timeLeft = {{ room.time_limit }} * 60;
+        const timer = document.getElementById('timer');
+        const interval = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                timer.innerHTML = '⏰ <span style="color: var(--danger); text-shadow: 0 0 10px var(--danger);">TIME EXPIRED!</span>';
+                document.getElementById('code-editor').disabled = true;
+                document.querySelector('.submit-btn').disabled = true;
+                
+                // Time's up animation
+                timer.style.animation = 'pulse 0.5s infinite alternate';
+            } else {
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timer.innerHTML = `⏳ ${mins}:${secs.toString().padStart(2, '0')}`;
+                
+                // Warning effects when time is running low
+                if (timeLeft <= 30) {
+                    timer.style.color = "var(--danger)";
+                    timer.style.textShadow = "0 0 10px var(--danger)";
+                    timer.style.animation = timeLeft <= 10 ? 'pulse 0.3s infinite alternate' : 'pulse 0.5s infinite alternate';
+                    
+                    if (timeLeft <= 5) {
+                        // Add dramatic shake effect
+                        timer.style.transform = `translateX(${Math.random() * 6 - 3}px)`;
+                    }
+                }
+                
+                timeLeft--;
+            }
+        }, 1000);
+        
+        // Enhanced celebration effects
+        function celebrateWin() {
+            // Confetti
+            const colors = ['#ff2d75', '#00f2fe', '#00ff88', '#ffdd57', '#ffffff'];
+            for (let i = 0; i < 150; i++) {
+                createParticle();
+            }
+            
+            // Screen flash
+            const flash = document.createElement('div');
+            flash.style.position = 'fixed';
+            flash.style.top = '0';
+            flash.style.left = '0';
+            flash.style.width = '100%';
+            flash.style.height = '100%';
+            flash.style.backgroundColor = 'rgba(0, 242, 254, 0.5)';
+            flash.style.zIndex = '1000';
+            flash.style.pointerEvents = 'none';
+            flash.style.animation = 'fadeOut 1.5s forwards';
+            document.body.appendChild(flash);
+            
+            // Victory text animation
+            const victoryText = document.createElement('div');
+            victoryText.textContent = 'YOU WIN!';
+            victoryText.style.position = 'fixed';
+            victoryText.style.top = '50%';
+            victoryText.style.left = '50%';
+            victoryText.style.transform = 'translate(-50%, -50%)';
+            victoryText.style.fontSize = '5rem';
+            victoryText.style.fontWeight = 'bold';
+            victoryText.style.color = 'var(--success)';
+            victoryText.style.textShadow = '0 0 20px var(--success)';
+            victoryText.style.zIndex = '1001';
+            victoryText.style.opacity = '0';
+            victoryText.style.animation = 'zoomIn 1.5s forwards';
+            victoryText.style.fontFamily = '"Press Start 2P", cursive';
+            document.body.appendChild(victoryText);
+            
+            setTimeout(() => {
+                document.body.removeChild(flash);
+                document.body.removeChild(victoryText);
+            }, 2000);
+        }
+        
+        function createParticle() {
+            const colors = ['#ff2d75', '#00f2fe', '#00ff88', '#ffdd57', '#ffffff'];
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.width = `${Math.random() * 15 + 5}px`;
+            particle.style.height = particle.style.width;
+            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.borderRadius = '50%';
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.top = '100vh';
+            particle.style.zIndex = '1000';
+            particle.style.pointerEvents = 'none';
+            
+            const animation = particle.animate([
+                { transform: 'translateY(0)', opacity: 1 },
+                { transform: `translateY(-${Math.random() * 100 + 50}vh) translateX(${Math.random() * 100 - 50}px)`, opacity: 0 }
+            ], {
+                duration: 2000 + Math.random() * 3000,
+                easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)'
+            });
+            
+            document.body.appendChild(particle);
+            animation.onfinish = () => particle.remove();
+        }
+        
+        // Add some initial animations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate editor container on load
+            const editor = document.querySelector('.editor-container');
+            setTimeout(() => {
+                editor.style.transform = 'perspective(500px) rotateX(0) translateY(0)';
+                editor.style.opacity = '1';
+            }, 300);
+            
+            // Initial typing effect
+            typeWriter(document.getElementById('status-content'), 
+                `⌨️ BATTLE INITIATED: ${username.toUpperCase()} VS OPPONENT`, 30);
+        });
+        
+        // Add CSS for additional animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+            
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+            
+            @keyframes zoomIn {
+                from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+                50% { opacity: 1; }
+                to { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+            }
+            
+            .editor-container {
+                opacity: 0;
+                transform: perspective(500px) rotateX(10deg) translateY(20px);
+                transition: all 0.8s ease;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
