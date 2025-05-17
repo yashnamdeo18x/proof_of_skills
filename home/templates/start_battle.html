@@ -1,0 +1,20 @@
+<h2>Start a Coding Battle</h2>
+
+<form method="POST" action="{% url 'start_battle' %}">
+  {% csrf_token %}
+  <label>Choose Difficulty:</label>
+  <select name="difficulty" required>
+    <option value="easy">Easy (20 min)</option>
+    <option value="medium">Medium (30 min)</option>
+    <option value="hard">Hard (40 min)</option>
+  </select>
+
+  <br><br>
+
+  <label>Challenge a developer by GitHub username (optional):</label>
+  <input type="text" name="github_username" placeholder="Leave empty for random matchmaking">
+
+  <br><br>
+
+  <button type="submit">Start Battle</button>
+</form>

@@ -2,13 +2,15 @@ from django.shortcuts import render
 import requests
 from django.http import JsonResponse,HttpResponse
 from social_django.models import UserSocialAuth
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from social_django.models import UserSocialAuth
 from django.conf import settings
 import json
-
+import random
+from .models import BattleRoom, Question
+from django.contrib.auth.models import User
 
 
 
@@ -226,3 +228,84 @@ def nft_metadata(request, repo):
     return JsonResponse(metadata)
 
 
+
+def get_random_question(difficulty):
+    questions = Question.objects.filter(difficulty=difficulty)
+    if questions.exists():
+        return random.choice(list(questions))
+    else:
+        raise ValueError(f"No questions found for difficulty '{difficulty}'")
+
+
+from django.shortcuts import redirect
+from django.utils.crypto import get_random_string
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+@login_required
+def start_battle_form(request):
+    return render(request, 'start_battle.html')
+
+@login_required
+def start_battle(request):
+    difficulty = request.POST.get("difficulty")  # easy/medium/hard
+    user = request.user
+
+    # Check if there's a waiting room with same difficulty
+    waiting_room = BattleRoom.objects.filter(player2__isnull=True, difficulty=difficulty, is_active=True).exclude(player1=user).first()
+
+    if waiting_room:
+        # Join existing room
+        waiting_room.player2 = user
+        waiting_room.save()
+        return redirect(f'/battle/{waiting_room.room_name}/')
+    else:
+        # Create a new room
+        room_name = get_random_string(12)
+
+        try:
+            question = get_random_question(difficulty)
+        except ValueError as e:
+            return HttpResponse(str(e))  # Handles case when no question found
+
+        time_limit = {'easy': 20, 'medium': 30, 'hard': 40}.get(difficulty, 20)
+
+        room = BattleRoom.objects.create(
+            room_name=room_name,
+            player1=user,
+            difficulty=difficulty,
+            question=question,
+            time_limit=time_limit,
+        )
+        return redirect(f'/battle/{room_name}/')
+
+def challenge_user(request):
+    github_username = request.POST.get("github_username")
+    difficulty = request.POST.get("difficulty")
+    user = request.user
+
+    try:
+        opponent = User.objects.get(username=github_username)
+    except User.DoesNotExist:
+        return HttpResponse("User not found")
+
+    room_name = get_random_string(12)
+    question = get_random_question(difficulty)
+    time_limit = {'easy': 20, 'medium': 30, 'hard': 40}.get(difficulty, 20)
+
+    room = BattleRoom.objects.create(
+        room_name=room_name,
+        player1=user,
+        player2=opponent,
+        difficulty=difficulty,
+        question=question,
+        time_limit=time_limit,
+    )
+    return redirect(f'/battle/{room_name}/')
+
+def battle_room_view(request, room_name):
+    room = get_object_or_404(BattleRoom, room_name=room_name)
+    return render(request, 'battle_room.html', {
+        'room': room,
+        'user': request.user
+    })

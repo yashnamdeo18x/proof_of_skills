@@ -41,10 +41,17 @@ INSTALLED_APPS = [
     'social_django',
     'home',
     'django_browser_reload',
+    'channels'
 ]
 
-COPYLEAKS_EMAIL = 'babita6783@gmail.com'
-COPYLEAKS_API_KEY = '3abd4624-a677-4e9e-b1c7-6df5d272bb9d'
+ASGI_APPLICATION = 'your_project_name.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+
 
 
 AUTHENTICATION_BACKENDS = (
@@ -98,7 +105,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'proof_of_skill_db',
         'USER': 'root',
-        'PASSWORD': 'Arpit2007@',
+        'PASSWORD': '@Yash514',
         'HOST': 'localhost',
         'PORT': '3306',
     }

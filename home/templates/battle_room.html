@@ -1,0 +1,49 @@
+<h2>Battle Room: {{ room.room_name }}</h2>
+<p><b>Question:</b> {{ room.question.title }}</p>
+<pre>{{ room.question.description }}</pre>
+
+<textarea id="code-editor" rows="15" cols="80"></textarea>
+<br>
+<button onclick="submitCode()">Submit Code</button>
+
+<p id="timer"></p>
+<p id="status"></p>
+
+<script>
+  const roomName = "{{ room.room_name }}";
+  const username = "{{ user.username }}";
+  const socket = new WebSocket(`ws://${window.location.host}/ws/battle/${roomName}/`);
+
+  socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    if (data.type === 'winner') {
+      document.getElementById('status').innerText = `🏆 Winner: ${data.username}`;
+      document.getElementById('code-editor').disabled = true;
+    }
+  }
+
+  function submitCode() {
+    const code = document.getElementById('code-editor').value;
+    socket.send(JSON.stringify({
+      type: 'submit_code',
+      username: username,
+      code: code
+    }));
+  }
+
+  // Countdown timer (20/30/40 min based on question level)
+  let timeLeft = {{ room.time_limit }} * 60;
+  const timer = document.getElementById('timer');
+  const interval = setInterval(() => {
+    if (timeLeft <= 0) {
+      clearInterval(interval);
+      timer.innerText = '⏰ Time Over!';
+      document.getElementById('code-editor').disabled = true;
+    } else {
+      const mins = Math.floor(timeLeft / 60);
+      const secs = timeLeft % 60;
+      timer.innerText = `⏳ ${mins}:${secs.toString().padStart(2, '0')}`;
+      timeLeft--;
+    }
+  }, 1000);
+</script>
